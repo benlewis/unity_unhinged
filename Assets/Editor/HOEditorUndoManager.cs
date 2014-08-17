@@ -111,9 +111,10 @@ public class HOEditorUndoManager
 			// When the LMB is pressed or the TAB key is released,
 			// store a snapshot, but don't register it as an undo
 			// (so that if nothing changes we avoid storing a useless undo).
-			Undo.SetSnapshotTarget( p_target, p_name );
-			Undo.CreateSnapshot();
-			Undo.ClearSnapshotTarget(); // Not sure if this is necessary.
+			//Undo.SetSnapshotTarget( p_target, p_name );
+			//Undo.CreateSnapshot();
+			//Undo.ClearSnapshotTarget(); // Not sure if this is necessary.
+			Undo.RecordObject (p_target, p_name);
 			listeningForGuiChanges = true;
 		}
 	}
