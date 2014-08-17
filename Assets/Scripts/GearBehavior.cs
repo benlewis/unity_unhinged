@@ -26,9 +26,9 @@ public class GearBehavior : MonoBehaviour {
 
 		connectedGears.Add (otherGear);
 		if (spinDirection == SpinDirection.SPIN_NONE && otherGear.spinDirection != SpinDirection.SPIN_NONE) {
-			StartSpinning (otherGear.spinDirection);
+			StartSpinning (otherGear);
 		} else if (otherGear.spinDirection == SpinDirection.SPIN_NONE && spinDirection != SpinDirection.SPIN_NONE) {
-			otherGear.StartSpinning (spinDirection);
+			otherGear.StartSpinning (this);
 		}
 	}
 
@@ -57,24 +57,34 @@ public class GearBehavior : MonoBehaviour {
 		spinDirection = SpinDirection.SPIN_NONE;
 	}
 
-	void StartSpinning(SpinDirection otherDirection) {
+	void StartSpinning(GearBehavior poweredGear) {
+		SpinDirection otherDirection;
+		if (poweredGear == null) {
+			otherDirection = startingTorque;
+		} else {
+			otherDirection = poweredGear.spinDirection;
+			float poweredGearRotation = poweredGear.transform.localEulerAngles.y;
+			print("Setting offset for " + transform.gameObject.name + ". Starting at " + transform.localEulerAngles.y + " and partner is " + poweredGearRotation);
+			transform.Rotate(0, 0, poweredGearRotation - transform.localEulerAngles.y + 24.0f);
+			print("New angle is " + transform.localEulerAngles.y);
+		}
+		
 		if (spinDirection != SpinDirection.SPIN_NONE)
-			return;
-
+			throw new UnityException("Shouldn't StartSpinning without a SpinDirection");
+		
 		switch (otherDirection) {
 		case SpinDirection.SPIN_CLOCKWISE: 
 			spinDirection = SpinDirection.SPIN_COUNTERCLOCKWISE;
-			transform.Rotate(0, 0, 24.0f); // give this a nice offset
-			Debug.Log("Setting offset for " + name);
 			break;
 		case SpinDirection.SPIN_COUNTERCLOCKWISE: 
 			spinDirection = SpinDirection.SPIN_CLOCKWISE; 
 			break;
-		case SpinDirection.SPIN_NONE: break;
+		case SpinDirection.SPIN_NONE: throw new UnityException("Shouldn't start spinning with SPIN_NONE");
 		}
 
 		foreach (GearBehavior g in connectedGears) {
-			g.StartSpinning(spinDirection);
+			if (g.spinDirection == SpinDirection.SPIN_NONE)
+				g.StartSpinning(this);
 		}
 	}
 	
@@ -83,12 +93,15 @@ public class GearBehavior : MonoBehaviour {
 	void Start () {
 		if (startingTorque != SpinDirection.SPIN_NONE) {
 			powerGears.Add(this);
-			StartSpinning(startingTorque);
+			StartSpinning(null);
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		// Only spin if right mouse button down
+//		if (!Input.GetMouseButton(1))
+//			return;
 		if (spinDirection == SpinDirection.SPIN_CLOCKWISE)
 			transform.Rotate(0,0,rotationSpeed * Time.deltaTime);
 		else if (spinDirection == SpinDirection.SPIN_COUNTERCLOCKWISE)
