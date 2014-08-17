@@ -26,7 +26,7 @@ public class SpawnChainPath : MonoBehaviour {
 		System.Collections.Generic.List<GameObject> links = new System.Collections.Generic.List<GameObject>();
 		
 		
-		ChildCount = transform.GetChildCount();
+		ChildCount = transform.childCount;
 		
 		for (int i = 0; i < ChildCount; i++) {
 			Transform t = this.transform.GetChild(i);
