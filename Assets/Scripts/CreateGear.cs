@@ -11,7 +11,11 @@ public class CreateGear : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+<<<<<<< HEAD
 		if (Input.GetMouseButton(0)) {
+=======
+		if (Input.GetMouseButtonDown(0)) {
+>>>>>>> 55102545033edb85d973b1a8db64dc3af425ac23
 			Transform camera = Camera.main.transform;
 			Ray ray = new Ray(camera.position + camera.forward * 0.4f, camera.forward);
 			RaycastHit hitInfo;
