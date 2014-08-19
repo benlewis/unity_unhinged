@@ -50,7 +50,7 @@ public class GearBehavior : MonoBehaviour {
 			StopSpinning ();
 	}
 
-	void StopSpinning() {
+	public void StopSpinning() {
 		if (spinDirection == SpinDirection.SPIN_NONE)
 			return;
 
@@ -64,9 +64,7 @@ public class GearBehavior : MonoBehaviour {
 		} else {
 			otherDirection = poweredGear.spinDirection;
 			float poweredGearRotation = poweredGear.transform.localEulerAngles.y;
-			print("Setting offset for " + transform.gameObject.name + ". Starting at " + transform.localEulerAngles.y + " and partner is " + poweredGearRotation);
 			transform.Rotate(0, 0, poweredGearRotation - transform.localEulerAngles.y + 24.0f);
-			print("New angle is " + transform.localEulerAngles.y);
 		}
 		
 		if (spinDirection != SpinDirection.SPIN_NONE)

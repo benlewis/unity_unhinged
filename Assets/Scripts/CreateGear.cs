@@ -4,6 +4,9 @@ using System.Collections;
 public class CreateGear : MonoBehaviour {
 	
 	public float range = 5.0f;
+	public float delay = 0.2f;
+	
+	private float timeElapsed = 0.0f;
 	
 	void Start() {
 		Screen.lockCursor = true;
@@ -11,23 +14,31 @@ public class CreateGear : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButton(0)) {
+		timeElapsed -= Time.deltaTime;
+		
+		if (timeElapsed > 0.0f)
+			return;
+			
+		if (Input.GetButton("Fire1")) {
+			timeElapsed = delay;				
 			Transform camera = Camera.main.transform;
 			Ray ray = new Ray(camera.position + camera.forward * 0.4f, camera.forward);
 			RaycastHit hitInfo;
+			LayerMask layer = LayerMask.GetMask("Facet with Peg");
 			
-			if (Physics.Raycast(ray, out hitInfo, range)) {
-				GameObject peg = hitInfo.collider.gameObject;
-				Debug.Log ("Hit " + peg.name);
-				if (peg.name == "Full Facet") {
-					Transform pegTransform = peg.transform.Find ("Peg");
-					if (pegTransform)
-						peg = pegTransform.gameObject;
-				}
-				if (peg.tag == "Peg") {
+			if (Physics.Raycast(ray, out hitInfo, range, layer)) {
+				GameObject facet = hitInfo.collider.gameObject;
+				Transform pegTransform = facet.transform.Find ("Peg");
+				if (pegTransform) {
+					GameObject peg = pegTransform.gameObject;
 					Transform gear = peg.transform.FindChild("Gear");
 					if (gear) {
-						gear.gameObject.SetActive(true);
+						if (!gear.gameObject.activeSelf)
+							gear.gameObject.SetActive(true);
+						else {
+							gear.GetComponent<GearBehavior>().StopSpinning();
+							gear.gameObject.SetActive(false);
+						}	
 					}
 				}
 			}

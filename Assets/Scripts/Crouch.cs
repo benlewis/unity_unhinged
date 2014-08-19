@@ -23,18 +23,6 @@ public class Crouch : MonoBehaviour {
 			cc.height += heightShift;
 			cc.transform.Translate(0, heightShift / 2.0f, 0);			                       	
 		}
-//		if (Input.GetKeyDown (KeyCode.LeftShift) && !isCrouching) {
-//			isCrouching = true;
-//			cc.height = 1.0f;
-//			cc.transform.Translate(0, -0.5f, 0);
-//		}
-//
-//		if (Input.GetKeyUp (KeyCode.LeftShift) && isCrouching) {
-//			isCrouching = false;
-//			cc.height = 2.0f;
-//			cc.transform.Translate(0, 0.5f, 0);
-//		}
-
 	}
 
 }
