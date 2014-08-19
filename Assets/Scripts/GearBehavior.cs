@@ -95,6 +95,19 @@ public class GearBehavior : MonoBehaviour {
 		}
 	}
 	
+	void OnTriggerEnter(Collider collider) {
+		print("Enter trigger with " + collider.transform.name);
+		GearBehavior gear = GetComponentInParent<GearBehavior> ();
+
+		if (!gear)
+			return;
+
+		GearBehavior otherGear = collider.GetComponentInParent<GearBehavior> ();
+		if (!otherGear)
+			return;
+				
+		gear.ConnectWithGear (otherGear);
+	}
 	// Update is called once per frame
 	void Update () {
 		// Only spin if right mouse button down

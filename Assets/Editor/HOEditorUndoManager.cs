@@ -190,9 +190,7 @@ public class HOEditorUndoManager
 	{
 		if ( !listeningForGuiChanges ) {
 			// Create a new snapshot.
-			Undo.SetSnapshotTarget( p_target, p_name );
-			Undo.CreateSnapshot();
-			Undo.ClearSnapshotTarget();
+			Undo.RecordObject( p_target, p_name );
 		}
 		SetDirty( p_target, p_name );
 	}
@@ -202,9 +200,7 @@ public class HOEditorUndoManager
  
 	private void SetDirty( Object p_target, string p_name )
 	{
-		Undo.SetSnapshotTarget( p_target, p_name );
-		Undo.RegisterSnapshot();
-		Undo.ClearSnapshotTarget(); // Not sure if this is necessary.
+		Undo.RecordObject( p_target, p_name );
 		if ( autoSetDirty )		EditorUtility.SetDirty( p_target );
 		listeningForGuiChanges = false;
  
