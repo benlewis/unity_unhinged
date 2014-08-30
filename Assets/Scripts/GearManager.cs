@@ -52,7 +52,6 @@ public class GearManager : MonoBehaviour {
 	
 	// Go through all gears and set the right rotation
 	private void UpdateGears() {
-		Debug.Log ("Update gears is called");
 		updateInProgress = true;
 		
 		foreach (Gear g in gears) {
@@ -81,15 +80,15 @@ public class GearManager : MonoBehaviour {
 		
 		if (newConnection) {		
 			if (b.rotationSpeed == 0.0f)
-				InterlockGears(b, a);
+				InterlockGears(b, a, new List<Gear>());
 			else
-				InterlockGears(a, b);
+				InterlockGears(a, b, new List<Gear>());
 				
 			UpdateGears();			
 		}
 	}
 	
-	private void InterlockGears(Gear a, Gear b) {		
+	private void InterlockGears(Gear a, Gear b, List<Gear> gearsToIgnore) {		
 		// Make the gears offset so it looks like they are lined up properly
 		Vector3 aAngle = a.transform.localEulerAngles;
 		Vector3 bAngle = b.transform.localEulerAngles;
@@ -101,11 +100,14 @@ public class GearManager : MonoBehaviour {
 			bAngle.x,
 			rotationOffset,
 			bAngle.z);
+		
+		if (!gearsToIgnore.Contains(a))
+			gearsToIgnore.Add (a);	
 			
-//		foreach (Gear g in b.connectedGears) {
-//			if (g != a)
-//				
-//		}
+		foreach (Gear g in b.connectedGears) {
+			if (!gearsToIgnore.Contains(g))
+				InterlockGears(b, g, gearsToIgnore);
+		}
 		
 	}
 	
