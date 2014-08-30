@@ -8,31 +8,46 @@ public class CreateGear : MonoBehaviour {
 	
 	private float timeElapsed = 0.0f;
 	
+	public GameObject selectedFacet = null;
+	
 	void Start() {
 		Screen.lockCursor = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+	
+		// Highlight any facets we are facing
+		Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+		RaycastHit hit;
+		LayerMask layer = LayerMask.GetMask("Facet with Peg");
+		
+		GameObject newSelectedFacet = null;
+		if (Physics.Raycast(ray, out hit, range, layer))
+			newSelectedFacet = hit.collider.gameObject;
+		
+		if (newSelectedFacet != selectedFacet) {
+			if (selectedFacet != null)
+				selectedFacet.GetComponent<HighlightSelectedFacet>().TurnOffHighlight();
+				
+			selectedFacet = newSelectedFacet;
+			
+			if (selectedFacet != null)
+				selectedFacet.GetComponent<HighlightSelectedFacet>().TurnOnHighlight();
+		}
+		
 		timeElapsed -= Time.deltaTime;
 		
 		if (timeElapsed > 0.0f)
 			return;
 			
-		if (Input.GetButton("Fire1")) {
+		if (Input.GetButton("Fire1") && selectedFacet != null) {
 			timeElapsed = delay;				
-			Transform camera = Camera.main.transform;
-			Ray ray = new Ray(camera.position + camera.forward * 0.4f, camera.forward);
-			RaycastHit hitInfo;
-			LayerMask layer = LayerMask.GetMask("Facet with Peg");
-			
-			if (Physics.Raycast(ray, out hitInfo, range, layer)) {
-				GameObject facet = hitInfo.collider.gameObject;
-				Transform pegTransform = facet.transform.Find ("Peg");
-				if (pegTransform) {
-					Gear gear = pegTransform.gameObject.GetComponentsInChildren<Gear>(true)[0];
+			Transform pegTransform = selectedFacet.transform.Find ("Peg");
+			if (pegTransform) {
+				Gear gear = pegTransform.gameObject.GetComponentsInChildren<Gear>(true)[0];
+				if (gear)
 					gear.AddToScene();
-				}
 			}
 		}
 	}

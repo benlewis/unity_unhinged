@@ -32,18 +32,6 @@ public class Gear : MonoBehaviour {
 		foreach (Gear g in connectedGears) {
 			if (g.rotationSpeed == 0.0f) {
 				g.rotationSpeed = -rotationSpeed * radius / g.radius;
-				
-				// Make the gears offset so it looks like they are lined up properly
-				Vector3 powerAngle = transform.localEulerAngles;
-				Vector3 newGearAngle = g.transform.localEulerAngles;
-				
-				float powerY = powerAngle.y % 36.0f;
-				float rotationOffset = 13.5f - powerY;
-				
-				g.transform.localEulerAngles = new Vector3(
-					newGearAngle.x,
-					rotationOffset,
-					newGearAngle.z);
 					
 				g.powerConnectedGears();
 			}
