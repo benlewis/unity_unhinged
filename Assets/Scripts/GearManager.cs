@@ -79,10 +79,36 @@ public class GearManager : MonoBehaviour {
 			b.connectedGears.Add (a);
 		}
 		
-		if (newConnection)		
-			UpdateGears();
+		if (newConnection) {		
+			if (b.rotationSpeed == 0.0f)
+				InterlockGears(b, a);
+			else
+				InterlockGears(a, b);
+				
+			UpdateGears();			
+		}
 	}
-
+	
+	private void InterlockGears(Gear a, Gear b) {		
+		// Make the gears offset so it looks like they are lined up properly
+		Vector3 aAngle = a.transform.localEulerAngles;
+		Vector3 bAngle = b.transform.localEulerAngles;
+		
+		float aY = aAngle.y % 36.0f;
+		float rotationOffset = 13.5f - aY;
+		
+		b.transform.localEulerAngles = new Vector3(
+			bAngle.x,
+			rotationOffset,
+			bAngle.z);
+			
+//		foreach (Gear g in b.connectedGears) {
+//			if (g != a)
+//				
+//		}
+		
+	}
+	
 	public void DisconnectGears(Gear a, Gear b) {
 		bool newConnection = false;
 		

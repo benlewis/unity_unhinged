@@ -31,14 +31,11 @@ public class Gear : MonoBehaviour {
 			
 		foreach (Gear g in connectedGears) {
 			if (g.rotationSpeed == 0.0f) {
-				Debug.Log ("Gear with starting power " + startingPower + " is powering gear with starting power " + g.startingPower);
 				g.rotationSpeed = -rotationSpeed * radius / g.radius;
 				
 				// Make the gears offset so it looks like they are lined up properly
 				Vector3 powerAngle = transform.localEulerAngles;
 				Vector3 newGearAngle = g.transform.localEulerAngles;
-				Debug.Log ("power gear angle: " + powerAngle.ToString());				
-				Debug.Log ("New gear angle: " + newGearAngle.ToString());
 				
 				float powerY = powerAngle.y % 36.0f;
 				float rotationOffset = 13.5f - powerY;
@@ -48,8 +45,6 @@ public class Gear : MonoBehaviour {
 					rotationOffset,
 					newGearAngle.z);
 					
-				Debug.Log ("New gear euler after rotate: " + g.transform.localEulerAngles.ToString());
-
 				g.powerConnectedGears();
 			}
 		}
