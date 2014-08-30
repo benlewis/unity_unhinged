@@ -10,7 +10,7 @@ public class Crouch : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		CharacterController cc = GetComponent<CharacterController>();
-		if (Input.GetButton("Crouch")) {
+		if (Input.GetButton("Crouch") || Mathf.Abs(Input.GetAxis("Crouch")) == 1.0f) {
 			if (cc.height > crouchingHeight) {
 				float heightShift = Mathf.Min(Time.deltaTime / crouchTime * (standingHeight - crouchingHeight), 
 				                              cc.height - crouchingHeight);
@@ -23,6 +23,8 @@ public class Crouch : MonoBehaviour {
 			cc.height += heightShift;
 			cc.transform.Translate(0, heightShift / 2.0f, 0);			                       	
 		}
+		
+		
 	}
 
 }

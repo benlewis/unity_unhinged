@@ -30,16 +30,8 @@ public class CreateGear : MonoBehaviour {
 				GameObject facet = hitInfo.collider.gameObject;
 				Transform pegTransform = facet.transform.Find ("Peg");
 				if (pegTransform) {
-					GameObject peg = pegTransform.gameObject;
-					Transform gear = peg.transform.FindChild("Gear");
-					if (gear) {
-						if (!gear.gameObject.activeSelf)
-							gear.gameObject.SetActive(true);
-						else {
-							gear.GetComponent<GearBehavior>().StopSpinning();
-							gear.gameObject.SetActive(false);
-						}	
-					}
+					Gear gear = pegTransform.gameObject.GetComponentsInChildren<Gear>(true)[0];
+					gear.AddToScene();
 				}
 			}
 		}

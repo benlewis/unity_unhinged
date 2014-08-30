@@ -4,21 +4,100 @@ using System.Collections.Generic;
 
 public class GearManager : MonoBehaviour {
 
-	private List<Gear> gears = ArrayList<Gear>();
+	private static GearManager instance;
+	private List<Gear> gears = new List<Gear>();
+	private List<Gear> powerGears = new List<Gear>();
+	
+	[HideInInspector]
+	public bool updateInProgress = false;
+
+	public static GearManager Instance() {
+		if (instance == null)
+			instance = GameObject.Find ("GameManager").GetComponent<GearManager>();
+		
+		return instance;
+	}
 
 	public void AddGear(Gear g) {
 		// Keep track of all gears in the scene
 		if (!gears.Contains(g))
 			gears.Add(g);
-	}
-
-	// Use this for initialization
-	void Start () {
-
+			
+		if (g.startingPower != 0.0f && !powerGears.Contains(g))
+			powerGears.Add(g);
+		
+		//UpdateGears();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	public void RemoveGear(Gear g) {
+		// Remove this from the list of gears in the scene
+		if (gears.Contains(g))
+			gears.Remove(g);
+		
+		// Remove this from our power gears as well, if applicable
+		if (powerGears.Contains (g))
+			powerGears.Remove(g);
+		
+		// Tell the other connected gears that we are not connected
+		foreach (Gear otherGear in g.connectedGears) {
+			otherGear.connectedGears.Remove(g);
+		}
+		
+		// Empty our connected gears
+		g.connectedGears.Clear();
+		
+		// Reset the scene
+		UpdateGears();
 	}
+	
+	// Go through all gears and set the right rotation
+	private void UpdateGears() {
+		Debug.Log ("Update gears is called");
+		updateInProgress = true;
+		
+		foreach (Gear g in gears) {
+			g.rotationSpeed = g.startingPower;
+		}
+		
+		foreach (Gear g in powerGears) {
+			g.powerConnectedGears();	
+		}
+		
+		updateInProgress = false;
+	}
+	
+	public void ConnectGears(Gear a, Gear b) {
+		bool newConnection = false;
+		// Keep track of which gears are connected	
+		if (!a.connectedGears.Contains (b)) {
+			newConnection = true;
+			a.connectedGears.Add (b);
+		}
+		
+		if (!b.connectedGears.Contains (a)) {
+			newConnection = true;
+			b.connectedGears.Add (a);
+		}
+		
+		if (newConnection)		
+			UpdateGears();
+	}
+
+	public void DisconnectGears(Gear a, Gear b) {
+		bool newConnection = false;
+		
+		if (a.connectedGears.Contains (b)) {
+			newConnection = true;
+			a.connectedGears.Remove (b);
+		}
+		
+		if (b.connectedGears.Contains (a)) {
+			newConnection = true;
+			b.connectedGears.Remove (a);
+		}
+		
+		if (newConnection)		
+			UpdateGears();
+	}
+	
 }
